@@ -43,7 +43,7 @@ dmc_algo <- function(n, qm, qc) {
   ## network represented as hash table with keys as node labels
   edge_list <- list()
   edge_list[['1']] <- c()
-  print(edge_list)
+  
   for(i in seq(2, n)){
     # i is the new node entering graph
     new_node <- as.character(i)

@@ -33,25 +33,22 @@ nest_list_to_df <- function(edge_list) {
 
 
 ## algorithm ----
-dmc_algo <- function(n, qm, qc, seed) {
+dmc_algo <- function(n, qm, qc) {
   # parameters:
   #   n: number of nodes in network
   #   qm: probability of breaking link between new/anchor node and neighbors; (1 - qm) is prob(forming link)
   #   qc: probability of breaking link between new and anchor node; (1 - qc) is prob(forming link)
-  #   seed: seed to set randomness
-  
-  # decide level of randomness
-  set.seed(seed)
   
   ## initialize network with 1 node
   ## network represented as hash table with keys as node labels
   edge_list <- list()
-  edge_list[[1]] <- c()
-  
+  edge_list[['1']] <- c()
+  print(edge_list)
   for(i in seq(2, n)){
     # i is the new node entering graph
+    new_node <- as.character(i)
     ## duplication step ----
-    anchor_node <- sample(seq(i - 1), 1, replace = FALSE) # select anchor at random
+    anchor_node <- sample(seq(i - 1), 1, replace = FALSE) %>% as.character() # select anchor at random
     neighbor_nodes <- edge_list[[anchor_node]] # copy anchor node neighbors to new node
     
     ## mutation step ---- 
@@ -64,13 +61,14 @@ dmc_algo <- function(n, qm, qc, seed) {
     
     ## complementation step ----
     if(rbinom(1, 1, 1 - qc)){ # if forming a link (1 - qc because we form a link instead of breaking it)
-      anchor_node_neighbors <- c(anchor_node_neighbors, i) # add new node to anchor's neighbor list
+      anchor_node_neighbors <- c(anchor_node_neighbors, new_node) # add new node to anchor's neighbor list
       new_node_neighbors <- c(new_node_neighbors, anchor_node) # add anchor node to new's neighbor list
     }
     
     ## update hashtable ----
     edge_list[[anchor_node]] <- anchor_node_neighbors
-    edge_list[[i]] <- new_node_neighbors
+    edge_list[[new_node]] <- new_node_neighbors
   }
   edge_list %>% nest_list_to_df() %>% return()
 }
+

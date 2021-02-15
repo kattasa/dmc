@@ -37,7 +37,7 @@ dmc_algo <- function(n, qm, qc) {
   # parameters:
   #   n: number of nodes in network
   #   qm: probability of breaking link between new/anchor node and neighbors; (1 - qm) is prob(forming link)
-  #   qc: probability of breaking link between new and anchor node; (1 - qc) is prob(forming link)
+  #   qc: probability of forming link between new and anchor node
   
   ## initialize network with 1 node
   ## network represented as hash table with keys as node labels
@@ -60,7 +60,7 @@ dmc_algo <- function(n, qm, qc) {
     new_node_neighbors <- neighbor_nodes[which(!(new_neighbors_cut))] # new node neighbors
     
     ## complementation step ----
-    if(rbinom(1, 1, 1 - qc)){ # if forming a link (1 - qc because we form a link instead of breaking it)
+    if(rbinom(1, 1, qc)){ # if forming a link
       anchor_node_neighbors <- c(anchor_node_neighbors, new_node) # add new node to anchor's neighbor list
       new_node_neighbors <- c(new_node_neighbors, anchor_node) # add anchor node to new's neighbor list
     }

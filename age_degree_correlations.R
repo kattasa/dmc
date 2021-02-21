@@ -22,7 +22,7 @@ age_deg_cor_mat <- ggplot(dmc_age_deg) +
   labs(x = 'Probability of severing neighbor ties - qm',
        y = 'Probability of forming anchor tie - qc',
        title = 'Correlation Matrix Between Node Age and Degree',
-       subtitle = 'Grouped by different qm and qc values',
+       subtitle = 'Grouped by different qm and qc values for networks with 100 nodes',
        fill = 'Correlation:\nAge vs Degree') +
   theme_minimal()
   

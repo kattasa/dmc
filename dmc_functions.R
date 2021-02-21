@@ -72,3 +72,46 @@ dmc_algo <- function(n, qm, qc) {
   edge_list %>% nest_list_to_df() %>% return()
 }
 
+
+sim_qmqc_values <- function(n, qm_interval, qc_interval){
+  # parameters:
+  #   n: number of nodes in graph
+  #   qm_interval: interval to increment qm by
+  #   qc_interval: interval to increment qc by
+  
+  # initialize empty dataframe
+  dmc_df <- data.frame(from = NULL, to = NULL, qm = NULL, qc = NULL, n = NULL)
+  # find network for each qm and qc value
+  for(qm in seq(qm_interval, 1, qm_interval)){
+    for(qc in seq(qc_interval, 1, qc_interval)){
+      dmc_df <- dmc_algo(n, qm = qm, qc = qc) %>%
+        mutate(qm = qm, # add information to identify graph
+               qc = qc, 
+               n = n) %>%
+        rbind(dmc_df)
+    }
+  }
+  return(dmc_df)
+}
+
+graphs_age_deg_cor <- function(dmc_df, n, qm_interval, qc_interval){
+  # parameters:
+  #   n: number of nodes in graph
+  #   qm_interval: interval to increment qm by
+  #   qc_interval: interval to increment qc by
+  
+  # create array of all possible nodes and qm/qc values
+  dmc_grid <- expand.grid(from = seq(1, n) %>% as.character(),
+                          qm = seq(qm_interval, 1, qm_interval),
+                          qc = seq(qc_interval, 1, qc_interval))
+  dmc_df %>%
+    group_by(qm, qc, from) %>%
+    summarise(degree = n()) %>% # calculate degree per node
+    full_join(dmc_grid) %>% # expand graphs to include nodes with 0 edges
+    replace_na(replace = list(degree = 0)) %>% # replace NA degrees with 0
+    mutate(age = as.numeric(from)) %>% # change from to be numeric for correlation calcs
+    group_by(qm, qc) %>%
+    summarize(cor_age_deg = cor(age, degree)) %>% # correlation bt age and degree
+    return()
+}
+

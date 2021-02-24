@@ -137,7 +137,6 @@ sim_qmqc_values <- function(n, qm_interval, qc_interval, n_times){
       for(qc in seq(0, 1, qc_interval)){
         dmc_df <- dmc_algo(n, qm = qm, qc = qc)$adjacency_matrix %>%
           graph_from_adjacency_matrix() %>%
-          
           mutate(qm = qm, # add information to identify graph
                  qc = qc, 
                  n = n,

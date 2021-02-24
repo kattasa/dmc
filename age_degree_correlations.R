@@ -11,10 +11,12 @@ library(tidyverse)
 n <- 100 # number of nodes in graph
 qm_interval <- 0.05 # interval to increment qm by
 qc_interval <- 0.05 # interval to increment qc by
+n_times <- 20 # number of individual graphs to simulate per qm, qc pair
 
 # create dataframe of simulated graphs
-dmc_df <- sim_qmqc_values(n, qm_interval, qc_interval)
+dmc_df <- sim_qmqc_values(n, qm_interval, qc_interval, n_times = n_times)
 dmc_age_deg <- graphs_age_deg_cor(dmc_df, n, qm_interval, qc_interval)
+
 
 ## calculate correlation between node age and node degree --- 
 age_deg_cor_mat <- ggplot(dmc_age_deg) +
@@ -23,6 +25,7 @@ age_deg_cor_mat <- ggplot(dmc_age_deg) +
        y = 'Probability of forming anchor tie - qc',
        title = 'Correlation Matrix Between Node Age and Degree',
        subtitle = 'Grouped by different qm and qc values for networks with 100 nodes',
+       caption = '20 Graphs per qm, qc pair',
        fill = 'Correlation:\nAge vs Degree') +
   theme_minimal()
   

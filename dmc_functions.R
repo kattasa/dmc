@@ -115,6 +115,14 @@ dmc_algo <- function(n, qm, qc){
   list(adjacency_matrix = adjacency_matrix, anchor_seq = anchor_seq) %>% return()
 }
 
+get_edge_list_from_matrix <- function(adjacency_matrix){
+  # parameters:
+  #   adjacency_matrix: adjacency matrix from an algorithm
+  graph_from_adjacency_matrix(adjacency_matrix) %>% 
+    get.data.frame() %>%
+    return()
+}
+
 sim_qmqc_values <- function(n, qm_interval, qc_interval, n_times){
   # parameters:
   #   n: number of nodes in graph
@@ -127,7 +135,9 @@ sim_qmqc_values <- function(n, qm_interval, qc_interval, n_times){
   for(i in seq(n_times)){
     for(qm in seq(0, 1, qm_interval)){
       for(qc in seq(0, 1, qc_interval)){
-        dmc_df <- dmc_algo(n, qm = qm, qc = qc) %>%
+        dmc_df <- dmc_algo(n, qm = qm, qc = qc)$adjacency_matrix %>%
+          graph_from_adjacency_matrix() %>%
+          
           mutate(qm = qm, # add information to identify graph
                  qc = qc, 
                  n = n,
@@ -159,4 +169,5 @@ graphs_age_deg_cor <- function(dmc_df, n, qm_interval, qc_interval){
     summarize(cor_age_deg = cor(age, degree)) %>%
     return()
 }
+
 

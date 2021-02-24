@@ -130,18 +130,18 @@ sim_qmqc_values <- function(n, qm_interval, qc_interval, n_times){
   #   qc_interval: interval to increment qc by
   
   # initialize empty dataframe
-  dmc_df <- data.frame(from = NULL, to = NULL, qm = NULL, qc = NULL, n = NULL, n_times = NULL)
+  dmc_df <- data.frame(from = NULL, to = NULL, qm = NULL, qc = NULL, n = NULL, nth = NULL)
   # find network for each qm and qc value
   for(i in seq(n_times)){
     for(qm in seq(0, 1, qm_interval)){
       for(qc in seq(0, 1, qc_interval)){
         dmc_df <- dmc_algo(n, qm = qm, qc = qc)$adjacency_matrix %>%
-          graph_from_adjacency_matrix() %>%
+          get_edge_list_from_matrix() %>%
           mutate(qm = qm, # add information to identify graph
                  qc = qc, 
                  n = n,
                  nth = i) %>%
-          rbind(dmc_df)
+          bind_rows(dmc_df)
       }
     } 
   }
@@ -155,7 +155,7 @@ graphs_age_deg_cor <- function(dmc_df, n, qm_interval, qc_interval){
   #   qc_interval: interval to increment qc by
   
   # create array of all possible nodes and qm/qc values
-  dmc_grid <- expand.grid(from = seq(1, n) %>% as.character(),
+  dmc_grid <- expand.grid(from = seq(1, n),
                           qm = seq(0, 1, qm_interval),
                           qc = seq(0, 1, qc_interval))
   dmc_df %>%
